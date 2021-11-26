@@ -13,6 +13,7 @@ import org.springframework.data.annotation.Id;
 @NoArgsConstructor
 @Getter
 @Setter
+
 @DynamoDBTable(tableName = "tab_heroes")
 public class HeroesModel {
 

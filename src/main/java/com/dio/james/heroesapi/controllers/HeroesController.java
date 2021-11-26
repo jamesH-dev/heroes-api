@@ -15,8 +15,10 @@ import static com.dio.james.heroesapi.constants.HeroesConstant.HEROES_ENDPOINT_L
 @RestController
 @Slf4j
 public class HeroesController {
+
     HeroesService heroesService;
     HeroesRepository heroesRepository;
+
 
     private static final org.slf4j.Logger log =
             org.slf4j.LoggerFactory.getLogger(HeroesController.class);
@@ -27,6 +29,7 @@ public class HeroesController {
     }
 
     @GetMapping(HEROES_ENDPOINT_LOCAL)
+    @ResponseStatus(HttpStatus.OK)
     public Flux <HeroesModel> getAllItems(){
         log.info("REQUESTING THE LIST OF ALL HEROES");
         return heroesService.findAll();
@@ -40,6 +43,19 @@ public class HeroesController {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping(HEROES_ENDPOINT_LOCAL + "/count")
+    public Mono count(){
+        log.info("COUNTING REGISTERED HEROES");
+        return heroesService.count();
+    }
+
+    @GetMapping(HEROES_ENDPOINT_LOCAL + "/exists/{id}")
+    public Mono existsById(@PathVariable String id){
+        log.info("VERIFYING IF THERE IS THE REGISTERED ID 5");
+        return heroesService.existsById(id);
+    }
+
+
     @PostMapping(HEROES_ENDPOINT_LOCAL)
     @ResponseStatus(code = HttpStatus.CREATED)
     public Mono <HeroesModel> createHero(@RequestBody HeroesModel heroes){
@@ -48,10 +64,10 @@ public class HeroesController {
     }
 
     @DeleteMapping(HEROES_ENDPOINT_LOCAL + "/{id}")
-    @ResponseStatus (code = HttpStatus.CONTINUE)
+    @ResponseStatus(code = HttpStatus.OK)
     public Mono <HttpStatus> deleteByIdHero(@PathVariable String id){
         heroesService.deleteById(id);
         log.info("DELETING A HERO WITH ID {}", id);
-        return Mono.justOrEmpty(HttpStatus.CONTINUE);
+        return Mono.justOrEmpty(HttpStatus.OK);
     }
 }
